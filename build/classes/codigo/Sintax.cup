@@ -1,0 +1,84 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+
+    public void syntax_error(Symbol s) {
+        this.s = s;
+    }
+
+    public Symbol getS() {
+        return this.s;
+    }
+:};
+
+terminal 
+    Def, Class, Module, Do, End, If, Elsif, Else, While, Until, For, In, Return, Yield, Break, 
+    Next, Redo, Rescue, Ensure, Case, When, IgualIgual, Diferente, Comparacion, TripleIgual, 
+    RangoInclusivo, RangoExclusivo, Exponenciacion, Suma, Resta, Multiplicacion, Division, Modulo, 
+    And, Or, Not, FlechaHash, Parentesis_a, Parentesis_c, Llave_a, Llave_c, Corchete_a, Corchete_c, 
+    Coma, Punto, DosPuntos, P_coma, Identificador, Numero, VariableInstancia, VariableClase, 
+    VariableGlobal, Simbolo, ERROR;
+
+non terminal 
+    PROGRAMA, DECLARACIONES, DECLARACION, SENTENCIA, CONDICIONAL, CICLO, EXPRESION;
+
+precedence left Or;
+precedence left And;
+precedence left IgualIgual, Diferente, Comparacion;
+precedence left Suma, Resta;
+precedence left Multiplicacion, Division, Modulo;
+precedence right Exponenciacion;
+
+start with PROGRAMA;
+
+PROGRAMA ::= 
+    DECLARACIONES 
+    | /* vacío */
+    ;
+
+DECLARACIONES ::= 
+    DECLARACIONES DECLARACION
+    | DECLARACION
+    ;
+
+DECLARACION ::= 
+    Def Identificador Parentesis_a Parentesis_c Llave_a SENTENCIA Llave_c 
+    | Class Identificador Llave_a SENTENCIA Llave_c
+    | Module Identificador Llave_a SENTENCIA Llave_c
+    ;
+
+SENTENCIA ::= 
+    SENTENCIA CONDICIONAL 
+    | SENTENCIA CICLO 
+    | SENTENCIA EXPRESION 
+    | CONDICIONAL 
+    | CICLO 
+    | EXPRESION 
+    ;
+
+CONDICIONAL ::= 
+    If EXPRESION Llave_a SENTENCIA Llave_c 
+    | If EXPRESION Llave_a SENTENCIA Llave_c Elsif EXPRESION Llave_a SENTENCIA Llave_c 
+    | If EXPRESION Llave_a SENTENCIA Llave_c Else Llave_a SENTENCIA Llave_c
+    ;
+
+CICLO ::= 
+    While EXPRESION Llave_a SENTENCIA Llave_c 
+    | Until EXPRESION Llave_a SENTENCIA Llave_c 
+    | For Identificador In EXPRESION Llave_a SENTENCIA Llave_c
+    ;
+
+EXPRESION ::= 
+    EXPRESION Suma EXPRESION 
+    | EXPRESION Resta EXPRESION 
+    | EXPRESION Multiplicacion EXPRESION 
+    | EXPRESION Division EXPRESION 
+    | EXPRESION Modulo EXPRESION 
+    | Parentesis_a EXPRESION Parentesis_c 
+    | Identificador 
+    | Numero
+    ;
